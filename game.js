@@ -76,7 +76,8 @@
 	function displayScore(){
 		document.getElementById('score').innerHTML = "<p>" + score + "</p>";
 	}
-		displayScore();
+    
+    displayScore();
 
 	function generateMaze(){
 		var maze = [];
@@ -91,12 +92,13 @@
 						newRow.push(2);
 					}
 					else{
-						newRow.push(wallOrCoin(maze, newRow, i, k));
+						newRow.push(1);
 					}
 				}
 				maze.push(newRow);
 			}
-		}
+        }
+        maze = buildInnerWalls(maze);
 		maze[1][1] = 0;
 		return maze;
 	}
@@ -109,13 +111,63 @@
 		return row;
 	}
 
-	function wallOrCoin(currentMaze, currentRow, i, k, prev){
-		let result = 1;
-		if(currentMaze[i - 1][k]==2){
-			result += Math.floor(Math.random() * 2);
-		}
-		if(currentRow[k - 1]==2){
-			result += Math.floor(Math.random() * 2);
-		}
-		return result;
-	}
+	function buildInnerWalls(currentMaze){
+        // how many walls?
+        // to begin the experiment, let's build five.
+        for(let w=0;w<5;w++){
+            buildWall(currentMaze);
+        }
+		return currentMaze;
+    }
+    
+    function buildWall(currentMaze){
+        //pick a direction:
+        var mazeSize = currentMaze.length - 2;
+        var direction = randomizer(2);
+        var initialSquare = [randomizer(mazeSize) + 1, randomizer(mazeSize) + 1];
+        maxDistanceFirst = randomizer(mazeSize);
+        if(direction==1){
+            var pivotPoint = verticalBlock(currentMaze, initialSquare);
+        }
+        else{
+            pivotPoint = horizontalBlock(currentMaze, initialSquare);
+        }
+
+        //then turn:
+        var turn = Math.floor(Math.random() * 2);
+        maxDistanceNext = randomizer(mazeSize);
+        if(turn==1){
+            if(direction==1){
+                horizontalBlock(currentMaze, pivotPoint);
+            }
+            else{
+                verticalBlock(currentMaze, pivotPoint);
+            }
+        }
+    }
+
+    function verticalBlock(currentMaze, startAt){
+        if(currentMaze[startAt[0] + 1][startAt[1]] != 2){
+            currentMaze[startAt[0][startAt[1]]] = 2;
+            startAt[0]++;
+            verticalBlock(currentMaze, startAt);
+        }
+        else{
+            return startAt;
+        }
+    }
+
+    function horizontalBlock(currentMaze, startAt){
+        if(currentMaze[startAt[0]][startAt[1] + 1] != 2){
+            currentMaze[startAt[0][startAt[1]]] = 2;
+            startAt[1]++;
+            horizontalBlock(currentMaze, startAt);
+        }
+        else{
+            return startAt;
+        }
+    }
+
+    function randomizer(max){
+        return Math.floor(Math.random() * max)
+    }
