@@ -1,5 +1,5 @@
 function generateMaze(){
-    var maze = [];
+    let maze = [];
     for(let i=0;i<10;i++){
         if(i==0 || i==9){
             maze.push(outerWall());
@@ -41,12 +41,12 @@ function buildInnerWalls(currentMaze){
 
 function buildWall(currentMaze){
     //pick a direction:
-    var mazeSize = currentMaze.length - 2;
-    var direction = randomizer(2);
-    var initialSquare = [randomizer(mazeSize) + 1, randomizer(mazeSize) + 1];
+    const mazeSize = currentMaze.length - 2;
+    const direction = randomizer(2);
+    const initialSquare = [randomizer(mazeSize) + 1, randomizer(mazeSize) + 1];
     console.log("inital square", initialSquare)
     maxDistanceFirst = randomizer(mazeSize);
-    var pivotPoint = [];
+    let pivotPoint = [];
     if(direction==1){
         pivotPoint = verticalBlock(currentMaze, initialSquare);
     }
@@ -55,7 +55,7 @@ function buildWall(currentMaze){
     }
 
     //then turn:
-    var turn = Math.floor(Math.random() * 2);
+    const turn = Math.floor(Math.random() * 2);
     maxDistanceNext = randomizer(mazeSize);
     if(turn==1){
         console.log("Turning...")
