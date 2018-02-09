@@ -34,6 +34,7 @@ function buildInnerWalls(currentMaze){
     // how many walls?
     // to begin the experiment, let's build five.
     for(let w=0;w<5;w++){
+        console.log("Building wall number:", w + 1);
         buildWall(currentMaze);
     }
     return currentMaze;
@@ -46,12 +47,16 @@ function buildWall(currentMaze){
     const initialSquare = [randomizer(mazeSize) + 1, randomizer(mazeSize) + 1];
     console.log("inital square", initialSquare)
     maxDistanceFirst = randomizer(mazeSize);
-    let pivotPoint = [];
+    let pivotPoint = [0, 0];
     if(direction==1){
+        console.log("Pivot point before assignment: " + pivotPoint);
         pivotPoint = verticalBlock(currentMaze, initialSquare);
+        console.log("Pivot point from vertical? " + pivotPoint);
     }
     else{
+        console.log("Pivot point before assignment: " + pivotPoint);
         pivotPoint = horizontalBlock(currentMaze, initialSquare);
+        console.log("Pivot point from horizontal? " + pivotPoint);
     }
 
     //then turn:
@@ -69,27 +74,25 @@ function buildWall(currentMaze){
 }
 
 function verticalBlock(currentMaze, startAt){
-    console.log("vertical:", startAt);
+    console.log("Building vertical block: " + startAt);
     if(currentMaze[startAt[0] + 1][startAt[1]] != 2){
         currentMaze[startAt[0][startAt[1]]] = 2;
         startAt[0]++;
         verticalBlock(currentMaze, startAt);
     }
-    else{
+        console.log("Returning start at from vertical: " + startAt);
         return startAt;
-    }
 }
 
 function horizontalBlock(currentMaze, startAt){
-    console.log("horizontal:", startAt);
+    console.log("Building horizontal block: " + startAt);
     if(currentMaze[startAt[0]][startAt[1] + 1] != 2){
         currentMaze[startAt[0][startAt[1]]] = 2;
         startAt[1]++;
         horizontalBlock(currentMaze, startAt);
     }
-    else{
+        console.log("Returning start at from horizontal: " + startAt);
         return startAt;
-    }
 }
 
 function randomizer(max){
