@@ -35,8 +35,7 @@ function buildInnerWalls(currentMaze){
     // to begin the experiment, let's build five.
     for(let w=0;w<5;w++){
         console.log("Building wall number:", w + 1);
-        buildWall(currentMaze);
-        mazeLogger(currentMaze);
+        currentMaze = buildWall(currentMaze);
     }
     return currentMaze;
 
@@ -47,12 +46,15 @@ function buildInnerWalls(currentMaze){
         const initialSquare = [randomizer(mazeSize) + 1, randomizer(mazeSize) + 1];
         let maxDistanceFirst = randomizer(mazeSize);
         let pivotPoint = [];
+        let buildResult = {};
         if(direction==1){
-            pivotPoint = verticalBlock(currentMaze, initialSquare);
+            buildResult = verticalBlock(currentMaze, initialSquare, maxDistanceFirst);
         }
         else{
-            pivotPoint = horizontalBlock(currentMaze, initialSquare);
+            buildResult = horizontalBlock(currentMaze, initialSquare, maxDistanceFirst);
         }
+        pivotPoint = buildResult.startAt;
+        currentMaze = buildResult.currentMaze;
     
         //then turn:
         const turn = Math.floor(Math.random() * 2);
@@ -60,36 +62,49 @@ function buildInnerWalls(currentMaze){
         if(turn==1){
             console.log("Turning...")
             if(direction==1){
-                horizontalBlock(currentMaze, pivotPoint);
+                currentMaze = horizontalBlock(currentMaze, pivotPoint, maxDistanceNext).currentMaze;
             }
             else{
-                verticalBlock(currentMaze, pivotPoint);
+                currentMaze = verticalBlock(currentMaze, pivotPoint, maxDistanceNext).currentMaze;
             }
         }
         return currentMaze;
-    
-        function verticalBlock(currentMaze, startAt){
-            if(currentMaze[startAt[0] + 1][startAt[1]] == 2){
-                return startAt;
+
+        function horizontalBlock(currentMaze, startAt, distanceToTravel){
+            console.log("Horizontal wall...");
+            console.log('Start at:', startAt);
+            console.log("Distance to travel:", distanceToTravel);
+            for(let i=0;i<distanceToTravel;i++){
+                if(currentMaze[startAt[0]][startAt[1] + 1] != 2){
+                    console.log("Starting square:", currentMaze[startAt[0]][startAt[1]])
+                    currentMaze[startAt[0]][startAt[1]] = 2;
+                    mazeLogger(currentMaze);
+                    startAt[1]++;
+                }
+                else{
+                    return {startAt: startAt, currentMaze: currentMaze};
+                }
             }
-            else{
-                currentMaze[startAt[0][startAt[1]]] = 2;
-                startAt[0]++;
-                return verticalBlock(currentMaze, startAt);
-            }
+            return {startAt: startAt, currentMaze: currentMaze};;
         }
-        
-        function horizontalBlock(currentMaze, startAt){
-            if(currentMaze[startAt[0]][startAt[1] + 1] == 2){
-                return startAt;
+
+        function verticalBlock(currentMaze, startAt, distanceToTravel){
+            console.log("Vertical wall...");
+            console.log('Start at:', startAt);
+            console.log("Distance to travel:", distanceToTravel);
+            for(let i=0;i<distanceToTravel;i++){
+                if(currentMaze[startAt[0] + 1][startAt[1]] != 2){
+                    console.log("Starting square:", currentMaze[startAt[0]][startAt[1]])
+                    currentMaze[startAt[0]][startAt[1]] = 2;
+                    mazeLogger(currentMaze);
+                    startAt[0]++;
+                }
+                else{
+                    return {startAt: startAt, currentMaze: currentMaze};;
+                }
             }
-            else{
-                currentMaze[startAt[0][startAt[1]]] = 2;
-                startAt[1]++;
-                return horizontalBlock(currentMaze, startAt);
-            }
+            return {startAt: startAt, currentMaze: currentMaze};;
         }
-    
     }
 }
 
@@ -99,9 +114,11 @@ function randomizer(max){
 }
 
 function mazeLogger(someMaze){
+    console.log("\n");
     for(let r=0;r<someMaze.length;r++){
         console.log(someMaze[r]);
     }
+    console.log("\n");
 }
 
 let myMaze = generateMaze();
